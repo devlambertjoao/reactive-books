@@ -20,7 +20,7 @@ public class BookEntity {
 	@Column(name = "BOOK_TITLE")
 	private String title;
 
-	@Column(name = "BOOK_AUTHOR_NAME")
+	@Column(name = "BOOK_AUTHOR_NAME") 
 	private String authorName;
 
 	public Long getId() {
