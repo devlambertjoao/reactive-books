@@ -1,7 +1,9 @@
 package com.lambert.book.controller;
 
+import com.lambert.book.service.BookService;
 import com.lambert.book.service.dto.BookDTO;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,58 +23,50 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping(value = "book")
 public class BookController {
-	
+
+	@Autowired
+	private BookService bookService;
+
 	@GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<BookDTO> findById(@PathVariable Long id) {
-		BookDTO bookDTO = new BookDTO();
-		bookDTO.setId(id);
-		bookDTO.setTitle("My book");
-		bookDTO.setAuthorName("Author Name");
-
-		return Mono.just(bookDTO);
+		return bookService.findById(id);
 	}
 
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public Flux<BookDTO> findAll() {
-		BookDTO bookDTO = new BookDTO();
-		bookDTO.setId(1l);
-		bookDTO.setTitle("My book");
-		bookDTO.setAuthorName("Author Name"); BookDTO bookDTO2 = new BookDTO();
-		bookDTO2.setId(2l);
-		bookDTO2.setTitle("My book 2");
-		bookDTO2.setAuthorName("Author Name");
-
-		BookDTO[] bookList = { bookDTO, bookDTO2 };
-
-		return Flux.fromArray(bookList);
+		return bookService.findAll();
 	}
 
-	@PostMapping(
-		consumes = MediaType.APPLICATION_JSON_VALUE, 
-		produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<BookDTO> create(@RequestBody BookDTO bookDTO) {
-		return Mono.just(bookDTO);
+		return bookService.create(bookDTO);
 	}
-	
-	@PutMapping(
-		consumes = MediaType.APPLICATION_JSON_VALUE, 
-		produces = MediaType.APPLICATION_JSON_VALUE
-	)
+
+	@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<BookDTO> update(@RequestBody BookDTO bookDTO) {
-		return Mono.just(bookDTO);
+		try {
+			return bookService.update(bookDTO);
+		} catch (Exception e) {
+			return Mono.error(e);
+		}
 	}
-	
-	@PatchMapping(
-		consumes = MediaType.APPLICATION_JSON_VALUE, 
-		produces = MediaType.APPLICATION_JSON_VALUE
-	)
+
+	@PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Mono<BookDTO> updatePatch(@RequestBody BookDTO bookDTO) {
-		return Mono.just(bookDTO);
+		try {
+			return bookService.updatePatch(bookDTO);
+		} catch (Exception e) {
+			return Mono.error(e);
+		}
 	}
 
 	@DeleteMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public Mono<Void> delete(@PathVariable Long id) {
-		return Mono.empty();
+		try {
+			return bookService.delete(id);
+		} catch (Exception e) {
+			return Mono.error(e);
+		}
 	}
 }
